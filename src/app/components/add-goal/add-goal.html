@@ -1,0 +1,50 @@
+<div class="container mt-4">
+  <h2>Add Goal</h2>
+  <!-- Titre de la page -->
+
+  <div class="mb-3">
+    <label class="form-label">Goal name</label>
+    <input
+      type="text"
+      class="form-control"
+      [formControl]="nameControl">
+    <!-- Champ nom du goal -->
+
+    @if (nameControl.touched && nameControl.invalid) {
+      <small class="text-danger">
+        Goal name is required
+      </small>
+    }
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Target amount</label>
+    <input
+      type="number"
+      class="form-control"
+      [formControl]="targetAmountControl">
+    <!-- Champ montant cible -->
+
+    @if (targetAmountControl.touched && targetAmountControl.invalid) {
+      <small class="text-danger">
+        Target amount must be greater than 0
+      </small>
+    }
+  </div>
+
+  <button
+    type="button"
+    class="btn btn-primary me-2"
+    (click)="onSubmit()">
+    Save
+  </button>
+  <!-- Bouton d'enregistrement -->
+
+  <button
+    type="button"
+    class="btn btn-secondary"
+    (click)="goBack()">
+    Cancel
+  </button>
+  <!-- Bouton retour -->
+</div>

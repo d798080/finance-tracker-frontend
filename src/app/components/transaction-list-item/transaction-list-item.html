@@ -1,0 +1,73 @@
+@if (transaction) {
+  <!-- Vérifie que l'objet transaction existe avant d'afficher le contenu.
+       Cela évite des erreurs si transaction est null ou undefined. -->
+
+  <div class="list-group-item d-flex justify-content-between align-items-center">
+    <!-- Conteneur principal pour afficher une transaction.
+         list-group-item : style Bootstrap pour une liste.
+         d-flex : active le système flexbox.
+         justify-content-between : espace entre les éléments gauche et droite.
+         align-items-center : aligne verticalement les éléments. -->
+
+    <div>
+      <!-- Bloc gauche contenant les informations textuelles -->
+
+      <div class="fw-semibold">
+        {{ transaction.description }}
+      </div>
+      <!-- Affiche la description de la transaction.
+           fw-semibold applique un texte légèrement en gras (Bootstrap). -->
+
+      <small class="text-muted">
+        {{ transaction.date }} • {{ transaction.category.name }} • {{ transaction.type }}
+      </small>
+      <!-- Affiche des informations secondaires :
+           date de la transaction
+           catégorie associée
+           type (INCOME ou EXPENSE)
+
+           small : texte plus petit
+           text-muted : couleur grisée -->
+    </div>
+
+    <div class="text-end">
+      <!-- Bloc droit contenant le montant et les boutons -->
+
+      <div class="fw-bold mb-2">
+        {{ transaction.amount | number:'1.2-2' }} €
+      </div>
+      <!-- Affiche le montant de la transaction.
+           Le pipe Angular "number" formate le nombre :
+           minimum 1 chiffre avant la virgule
+           2 chiffres après la virgule.
+           Exemple : 45 devient 45.00 -->
+
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-primary me-2"
+        (click)="editTransaction()">
+        Edit
+      </button>
+      <!-- Bouton permettant de modifier la transaction.
+           btn : style Bootstrap
+           btn-sm : bouton petit
+           btn-outline-primary : style bleu
+           me-2 : marge à droite
+
+           (click)="editTransaction()" appelle la méthode
+           editTransaction() dans le fichier TypeScript. -->
+
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-danger"
+        (click)="deleteTransaction()">
+        Delete
+      </button>
+      <!-- Bouton permettant de supprimer la transaction.
+           btn-outline-danger : style rouge
+
+           (click)="deleteTransaction()" appelle la méthode
+           deleteTransaction() dans le composant TypeScript. -->
+    </div>
+  </div>
+}

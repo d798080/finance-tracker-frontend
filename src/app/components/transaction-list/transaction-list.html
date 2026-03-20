@@ -1,0 +1,257 @@
+<div class="row mb-4">
+  <!-- Ligne Bootstrap contenant les cartes de résumé financier -->
+
+  <div class="col-md-4">
+    <!-- Colonne pour la carte des revenus -->
+
+    <div class="card text-center">
+      <!-- Carte Bootstrap centrée -->
+
+      <div class="card-body">
+        <h5 class="card-title">Income</h5>
+        <!-- Titre de la carte -->
+
+        <p class="card-text fw-bold text-success">
+          {{ totalIncome | number:'1.2-2' }} €
+        </p>
+        <!-- Affiche le total des revenus.
+             Le pipe number formate le montant avec 2 décimales.
+             text-success colore le texte en vert. -->
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <!-- Colonne pour la carte des dépenses -->
+
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title">Expenses</h5>
+
+        <p class="card-text fw-bold text-danger">
+          {{ totalExpense | number:'1.2-2' }} €
+        </p>
+        <!-- Affiche le total des dépenses.
+             text-danger colore le texte en rouge. -->
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <!-- Colonne pour la carte du solde -->
+
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title">Balance</h5>
+
+        <p class="card-text fw-bold">
+          {{ balance | number:'1.2-2' }} €
+        </p>
+        <!-- Affiche le solde :
+             revenus - dépenses -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card mt-4">
+  <!-- Carte Bootstrap contenant le graphique -->
+
+  <div class="card-body">
+    <h5 class="card-title">Expenses by Category</h5>
+
+    <div style="height: 250px; max-width: 400px; margin: auto;">
+  <canvas id="expenseChart"></canvas>
+</div>
+    <!-- Canvas HTML où Chart.js va dessiner le graphique -->
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <h2>Goals</h2>
+
+  <button
+    type="button"
+    class="btn btn-sm btn-primary"
+    routerLink="/add-goal">
+    Add Goal
+  </button>
+</div>
+<!-- Titre de la section affichant les objectifs d'épargne -->
+
+@if (goals.length) {
+  <!-- Vérifie si au moins un goal existe -->
+
+  <div class="list-group mb-4">
+  <!-- Conteneur Bootstrap pour la liste des goals -->
+
+    @for (goal of goals; track goal.id) {
+    <!-- Parcourt la liste des objectifs d'épargne -->
+
+      <div class="list-group-item">
+      <!-- Élément représentant un goal -->
+
+        <div class="d-flex justify-content-between align-items-center mb-2">
+        <!-- Ligne contenant le nom du goal et le montant cible -->
+
+          <div>
+            <div class="fw-semibold">{{ goal.name }}</div>
+            <!-- Nom de l'objectif d'épargne -->
+
+            <small class="text-muted">
+              Savings goal
+            </small>
+            <!-- Petit texte descriptif -->
+          </div>
+
+          <div class="fw-bold">
+            {{ goal.targetAmount | number:'1.2-2' }} €
+          </div>
+          <!-- Montant cible du goal -->
+        </div>
+
+        <div class="progress mb-2">
+        <!-- Barre de progression Bootstrap -->
+
+          <div
+            class="progress-bar"
+            role="progressbar"
+            [style.width.%]="getGoalProgress(goal)">
+            {{ getGoalProgress(goal) | number:'1.0-0' }}%
+          </div>
+          <!-- Largeur de la barre calculée en fonction du pourcentage de progression -->
+        </div>
+
+        <small class="text-muted">
+          Current balance: {{ balance | number:'1.2-2' }} €
+        </small>
+        <!-- Affiche le solde actuel utilisé pour calculer la progression -->
+      </div>
+    }
+  </div>
+
+} @else {
+  <p>No goals available.</p>
+  <!-- Message affiché si aucun goal n'existe -->
+}
+
+<h2>Transactions</h2>
+<!-- Titre de la section affichant la liste des transactions -->
+
+<div class="mb-3">
+  <!-- Bloc contenant le filtre par catégorie -->
+
+  <label for="categoryFilter" class="form-label">
+    Filter by category
+  </label>
+  <!-- Texte affiché au-dessus de la liste déroulante -->
+
+  <select
+    id="categoryFilter"
+    class="form-select"
+    (change)="onCategoryChange($event)">
+
+    <option value="">
+      All categories
+    </option>
+    <!-- Option par défaut : aucune catégorie sélectionnée.
+         Si cette option est choisie, toutes les transactions sont affichées. -->
+
+    @for (category of categories; track category.id) {
+      <option [value]="category.id">
+        {{ category.name }}
+      </option>
+    }
+    <!-- Une option est générée pour chaque catégorie.
+         [value]="category.id" envoie l'identifiant de la catégorie sélectionnée. -->
+  </select>
+</div>
+<div class="mb-3">
+  <!-- Bloc contenant le filtre par type -->
+
+  <label for="typeFilter" class="form-label">
+    Filter by type
+  </label>
+  <!-- Texte affiché au-dessus de la liste déroulante -->
+
+  <select
+    id="typeFilter"
+    class="form-select"
+    (change)="onTypeChange($event)">
+
+    <option value="">
+      All types
+    </option>
+    <!-- Option par défaut : aucun filtre par type -->
+
+    <option value="INCOME">
+      INCOME
+    </option>
+    <!-- Affiche seulement les revenus -->
+
+    <option value="EXPENSE">
+      EXPENSE
+    </option>
+    <!-- Affiche seulement les dépenses -->
+  </select>
+</div>
+<div class="mb-3">
+  <!-- Filtre par date -->
+
+  <label class="form-label">
+    Filter by date
+  </label>
+
+  <div class="row">
+
+    <div class="col">
+      <input
+        type="date"
+        class="form-control"
+        (change)="onStartDateChange($event)">
+      <!-- Champ date de début -->
+    </div>
+
+    <div class="col">
+      <input
+        type="date"
+        class="form-control"
+        (change)="onEndDateChange($event)">
+      <!-- Champ date de fin -->
+    </div>
+
+  </div>
+</div>
+
+@if (filteredTransactions.length) {
+  <!-- Vérifie si des transactions existent après application du filtre -->
+
+  <div class="list-group">
+    <!-- Conteneur Bootstrap pour la liste des transactions -->
+
+    @for (transaction of filteredTransactions; track transaction.id) {
+      <!-- Parcourt la liste des transactions filtrées.
+           track transaction.id permet à Angular d'optimiser le rendu
+           en utilisant l'identifiant unique de chaque transaction. -->
+
+      <app-transaction-list-item
+        [transaction]="transaction"
+        (deleted)="deleteTransaction(transaction.id)">
+      </app-transaction-list-item>
+
+      <!-- Création d'un composant enfant pour afficher une transaction -->
+
+      <!-- [transaction]="transaction"
+           envoie la transaction actuelle au composant enfant via @Input() -->
+
+      <!-- (deleted)="deleteTransaction(transaction.id)"
+           écoute l'événement envoyé par le composant enfant
+           lorsqu'on clique sur Delete -->
+    }
+  </div>
+
+} @else {
+  <p>No transactions available.</p>
+  <!-- Message affiché si aucune transaction n'existe
+       ou si aucune transaction ne correspond au filtre -->
+}
