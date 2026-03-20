@@ -8,6 +8,9 @@ import { Observable } from 'rxjs';
 import { Category } from '../data/category';
 //Import du modèle Category
 
+import { environment } from '../environments/environment';
+//Import du fichier environment contenant l'URL du backend
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,8 +19,9 @@ import { Category } from '../data/category';
 
 export class CategoryService {
 
-  private apiUrl = 'http://localhost:8080/v1/categories';
+  private apiUrl = `${environment.apiUrl}/categories`;
   //URL du endpoint backend pour les catégories
+  //environment.apiUrl contient la base (ex: http://localhost:8080/v1)
 
   constructor(private http: HttpClient) {}
   //Injection de HttpClient dans le service
@@ -34,6 +38,4 @@ export class CategoryService {
     //Le backend Spring Boot renvoie une liste de catégories
     //HttpClient convertit automatiquement la réponse JSON en Category[]
   }
-
-
 }

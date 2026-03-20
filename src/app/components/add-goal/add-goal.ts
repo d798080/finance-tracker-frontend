@@ -3,6 +3,8 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { GoalService } from '../../services/goal';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-add-goal',
@@ -44,26 +46,54 @@ export class AddGoal {
   }
 
   onSubmit(): void {
-    //Marque les champs comme touchés pour afficher les erreurs
+  //Marque les champs comme touchés pour afficher les erreurs
+  this.nameControl.markAsTouched();
+  this.targetAmountControl.markAsTouched();
 
-    this.nameControl.markAsTouched();
-    this.targetAmountControl.markAsTouched();
-
-    if (this.nameControl.invalid || this.targetAmountControl.invalid) {
-      alert('Please review the form');
-      return;
-    }
-
-    const payload = {
-      name: this.nameControl.value!,
-      targetAmount: Number(this.targetAmountControl.value!)
-    };
-    //Objet envoyé au backend
-
-    this.goalService.create(payload).subscribe(() => {
-      alert('Goal created');
-      this.router.navigateByUrl('/');
+  if (this.nameControl.invalid || this.targetAmountControl.invalid) {
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'error',
+      title: 'Please review the form',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true
     });
-    //Crée le goal puis revient à l'accueil
+    return;
   }
+
+  const payload = {
+    name: this.nameControl.value!,
+    targetAmount: Number(this.targetAmountControl.value!)
+  };
+  //Objet envoyé au backend
+
+  this.goalService.create(payload).subscribe({
+    next: () => {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Goal created successfully',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+      });
+
+      this.router.navigateByUrl('/');
+    },
+    error: () => {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'error',
+        title: 'An error occurred while creating the goal',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+      });
+    }
+  });
+}
 }

@@ -8,6 +8,9 @@ import { Observable } from 'rxjs';
 import { Goal, GoalCreateInput } from '../data/goal';
 //Import du modèle Goal et du type utilisé pour la création
 
+import { environment } from '../environments/environment';
+//Import du fichier environment contenant l'URL du backend
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,8 +19,9 @@ import { Goal, GoalCreateInput } from '../data/goal';
 
 export class GoalService {
 
-  private apiUrl = 'http://localhost:8080/v1/goals';
+  private apiUrl = `${environment.apiUrl}/goals`;
   //URL du backend pour les goals
+  //environment.apiUrl contient la base (ex: http://localhost:8080/v1)
 
   constructor(private http: HttpClient) {}
   //Injection de HttpClient dans le service

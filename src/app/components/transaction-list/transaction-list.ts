@@ -203,7 +203,7 @@ selectedType: string = '';
 //Type sélectionné dans le filtre
 //Si vide, aucun filtre par type n'est appliqué
 
-
+//à refaire dans le backend
 applyFilter(): void {
   //Applique tous les filtres sur les transactions
 

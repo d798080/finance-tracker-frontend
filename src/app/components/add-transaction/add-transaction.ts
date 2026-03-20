@@ -6,6 +6,8 @@ import { Category } from '../../data/category';
 import { CategoryService } from '../../services/category';
 //Service qui permet de récupérer les catégories
 
+import Swal from 'sweetalert2';
+
 import { TransactionService } from '../../services/transaction';
 //Service qui permet de gérer les transactions
 
@@ -125,48 +127,67 @@ export class AddTransaction implements OnInit {
   }
 
   onSubmit(): void {
-    //On marque tous les champs comme touchés
-    //pour déclencher les validations visuelles
-    this.descriptionControl.markAsTouched();
-    this.amountControl.markAsTouched();
-    this.typeControl.markAsTouched();
-    this.dateControl.markAsTouched();
-    this.categoryControl.markAsTouched();
+  //On marque chaque champ comme touché
+  this.descriptionControl.markAsTouched();
+  this.amountControl.markAsTouched();
+  this.typeControl.markAsTouched();
+  this.dateControl.markAsTouched();
+  this.categoryControl.markAsTouched();
 
-    //Vérification si le formulaire est invalide
-    if (this.descriptionControl.invalid || this.amountControl.invalid || this.typeControl.invalid || this.dateControl.invalid || this.categoryControl.invalid
-    ) {
-      alert('Please review the form');
-      return;
-    }
-
-    //Création de l'objet envoyé au backend
-    const payload = {
-      description: this.descriptionControl.value!,
-      amount: Number(this.amountControl.value!),
-      type: this.typeControl.value!,
-      date: this.dateControl.value!,
-      category: {
-        id: this.categoryControl.value!
-      },
-    };
-    //Note : le ! signifie que l'on affirme que la valeur n'est pas nulle
-
-    if (this.isEditMode && this.transactionId) {
-      //Si on est en mode édition, on met à jour la transaction existante
-
-      this.transactionService.update(this.transactionId, payload).subscribe(() => {
-        alert('Transaction updated');
-        this.router.navigateByUrl('/');
-      });
-
-    } else {
-      //Sinon, on crée une nouvelle transaction
-
-      this.transactionService.create(payload).subscribe(() => {
-        alert('Transaction created');
-        this.router.navigateByUrl('/');
-      });
-    }
+  if (
+    this.descriptionControl.invalid ||
+    this.amountControl.invalid ||
+    this.typeControl.invalid ||
+    this.dateControl.invalid ||
+    this.categoryControl.invalid
+  ) {
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'error',
+      title: 'Please review the form',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true
+    });
+    return;
   }
+
+  const payload = {
+    description: this.descriptionControl.value!,
+    amount: Number(this.amountControl.value!),
+    type: this.typeControl.value!,
+    date: this.dateControl.value!,
+    category: {
+      id: this.categoryControl.value!
+    },
+  };
+
+  this.transactionService.create(payload).subscribe({
+    next: () => {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Transaction created successfully',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+      });
+
+      this.router.navigateByUrl('/');
+    },
+    error: () => {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'error',
+        title: 'An error occurred while creating the transaction',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+      });
+    }
+  });
+}
 }

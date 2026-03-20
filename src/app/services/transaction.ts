@@ -9,6 +9,9 @@ import { Observable } from 'rxjs';
 import { Transaction, TransactionCreateInput } from '../data/transaction';
 //Import du modèle Transaction et du type utilisé pour créer une transaction
 
+import { environment } from '../environments/environment';
+//Import du fichier environment contenant l'URL du backend
+
 @Injectable({
   providedIn: 'root'
 })
@@ -17,8 +20,9 @@ import { Transaction, TransactionCreateInput } from '../data/transaction';
 
 export class TransactionService {
 
-  private apiUrl = 'http://localhost:8080/v1/transactions';
+  private apiUrl = `${environment.apiUrl}/transactions`;
   //URL de l'API backend pour les transactions
+  //environment.apiUrl contient la base (ex: http://localhost:8080/v1)
 
   constructor(private http: HttpClient) {}
   //Injection du service HttpClient dans ce service
@@ -47,28 +51,23 @@ export class TransactionService {
     //et renvoie la transaction créée
   }
 
-    delete(id: string): Observable<void> {
+  delete(id: string): Observable<void> {
   //Cette méthode supprime une transaction à partir de son id (: Observable<void> signifie qu'un observable est retourné)
 
-  return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  //Envoie une requête HTTP DELETE vers : http://localhost:8080/v1/transactions/{id}
-}
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    //Envoie une requête HTTP DELETE vers : http://localhost:8080/v1/transactions/{id}
+  }
 
   update(id: string, payload: TransactionCreateInput): Observable<Transaction> {
   //Met à jour une transaction existante à partir de son id
 
-  return this.http.put<Transaction>(`${this.apiUrl}/${id}`, payload);
-  //Envoie une requête HTTP PUT vers :
-  //http://localhost:8080/v1/transactions/{id}
-}
+    return this.http.put<Transaction>(`${this.apiUrl}/${id}`, payload);
+    //Envoie une requête HTTP PUT vers :
+    //http://localhost:8080/v1/transactions/{id}
+  }
 
-getById(id: string): Observable<Transaction> {
-  //Récupère une transaction à partir de son id
-  return this.http.get<Transaction>(`${this.apiUrl}/${id}`);
-}
-
-
-
-
-
+  getById(id: string): Observable<Transaction> {
+    //Récupère une transaction à partir de son id
+    return this.http.get<Transaction>(`${this.apiUrl}/${id}`);
+  }
 }
