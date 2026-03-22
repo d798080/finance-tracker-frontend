@@ -162,32 +162,67 @@ export class AddTransaction implements OnInit {
       id: this.categoryControl.value!
     },
   };
+  //Objet envoyé au backend
 
-  this.transactionService.create(payload).subscribe({
-    next: () => {
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: 'Transaction created successfully',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true
-      });
+  if (this.isEditMode && this.transactionId) {
+    //Si on est en mode édition, on met à jour la transaction existante
 
-      this.router.navigateByUrl('/');
-    },
-    error: () => {
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'error',
-        title: 'An error occurred while creating the transaction',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true
-      });
-    }
-  });
+    this.transactionService.update(this.transactionId, payload).subscribe({
+      next: () => {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Transaction updated successfully',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true
+        });
+
+        this.router.navigateByUrl('/');
+      },
+      error: () => {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'error',
+          title: 'An error occurred while updating the transaction',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true
+        });
+      }
+    });
+
+  } else {
+    //Sinon, on crée une nouvelle transaction
+
+    this.transactionService.create(payload).subscribe({
+      next: () => {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Transaction created successfully',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true
+        });
+
+        this.router.navigateByUrl('/');
+      },
+      error: () => {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'error',
+          title: 'An error occurred while creating the transaction',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true
+        });
+      }
+    });
+  }
 }
 }

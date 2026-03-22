@@ -220,35 +220,40 @@
   </div>
 </div>
 
-@if (filteredTransactions.length) {
-  <!-- Vérifie si des transactions existent après application du filtre -->
+@if (transactions$ | async; as transactions) {
+  <!-- transactions$ est un Observable.
+       Le pipe async permet de récupérer sa valeur automatiquement. -->
 
-  <div class="list-group">
-    <!-- Conteneur Bootstrap pour la liste des transactions -->
+  @if (filteredTransactions.length) {
+    <!-- Vérifie si des transactions existent après application du filtre -->
 
-    @for (transaction of filteredTransactions; track transaction.id) {
-      <!-- Parcourt la liste des transactions filtrées.
-           track transaction.id permet à Angular d'optimiser le rendu
-           en utilisant l'identifiant unique de chaque transaction. -->
+    <div class="list-group">
+      <!-- Conteneur Bootstrap pour la liste des transactions -->
 
-      <app-transaction-list-item
-        [transaction]="transaction"
-        (deleted)="deleteTransaction(transaction.id)">
-      </app-transaction-list-item>
+      @for (transaction of filteredTransactions; track transaction.id) {
+        <!-- Parcourt la liste des transactions filtrées.
+             track transaction.id permet à Angular d'optimiser le rendu
+             en utilisant l'identifiant unique de chaque transaction. -->
 
-      <!-- Création d'un composant enfant pour afficher une transaction -->
+        <app-transaction-list-item
+          [transaction]="transaction"
+          (deleted)="deleteTransaction(transaction.id)">
+        </app-transaction-list-item>
 
-      <!-- [transaction]="transaction"
-           envoie la transaction actuelle au composant enfant via @Input() -->
+        <!-- Création d'un composant enfant pour afficher une transaction -->
 
-      <!-- (deleted)="deleteTransaction(transaction.id)"
-           écoute l'événement envoyé par le composant enfant
-           lorsqu'on clique sur Delete -->
-    }
-  </div>
+        <!-- [transaction]="transaction"
+             envoie la transaction actuelle au composant enfant via @Input() -->
 
-} @else {
-  <p>No transactions available.</p>
-  <!-- Message affiché si aucune transaction n'existe
-       ou si aucune transaction ne correspond au filtre -->
+        <!-- (deleted)="deleteTransaction(transaction.id)"
+             écoute l'événement envoyé par le composant enfant
+             lorsqu'on clique sur Delete -->
+      }
+    </div>
+
+  } @else {
+    <p>No transactions available.</p>
+    <!-- Message affiché si aucune transaction n'existe
+         ou si aucune transaction ne correspond au filtre -->
+  }
 }
