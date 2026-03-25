@@ -10,6 +10,8 @@ import Chart from 'chart.js/auto';
 import { Goal } from '../../data/goal';
 import { GoalService } from '../../services/goal';
 
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-transaction-list',
   standalone: false,
@@ -88,19 +90,54 @@ export class TransactionList implements OnInit {
   }
 
   deleteTransaction(id: string): void {
-    //Demande confirmation avant suppression
 
-    const confirmed = confirm('Are you sure you want to delete this transaction?');
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'This transaction will be permanently deleted.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete it',
+    cancelButtonText: 'Cancel',
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6'
+  }).then((result) => {
 
-    if (!confirmed) {
-      return;
+    if (result.isConfirmed) {
+
+      this.transactionService.delete(id).subscribe({
+
+        next: () => {
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Transaction deleted',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+          });
+
+          this.loadTransactions();
+        },
+
+        error: () => {
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'error',
+            title: 'Error while deleting transaction',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+          });
+        }
+
+      });
+
     }
 
-    this.transactionService.delete(id).subscribe(() => {
-      this.loadTransactions();
-      //Recharge les transactions après suppression
-    });
-  }
+  });
+}
 
   //Pour le dashboard----------------------------
 
