@@ -76,6 +76,7 @@
     routerLink="/add-goal">
     Add Goal
   </button>
+  
 </div>
 <!-- Titre de la section affichant les objectifs d'épargne -->
 
@@ -104,10 +105,20 @@
             <!-- Petit texte descriptif -->
           </div>
 
-          <div class="fw-bold">
-            {{ goal.targetAmount | number:'1.2-2' }} €
-          </div>
-          <!-- Montant cible du goal -->
+          <div class="d-flex align-items-center gap-2">
+
+  <div class="fw-bold">
+    {{ goal.targetAmount | number:'1.2-2' }} €
+  </div>
+
+  <button
+    class="btn btn-sm btn-outline-danger"
+    (click)="deleteGoal(goal.id)">
+    Delete
+  </button>
+
+</div>
+          <!-- Bouton de suppression -->
         </div>
 
         <div class="progress mb-2">

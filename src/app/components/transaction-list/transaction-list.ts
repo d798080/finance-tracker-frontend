@@ -330,4 +330,54 @@ export class TransactionList implements OnInit {
     return Math.min(progress, 100);
     //Empêche le pourcentage de dépasser 100%
   }
+
+  deleteGoal(id: string): void {
+
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'This goal will be permanently deleted.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete it',
+    cancelButtonText: 'Cancel',
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6'
+  }).then((result) => {
+
+    if (result.isConfirmed) {
+
+      this.goalService.delete(id).subscribe({
+
+        next: () => {
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Goal deleted',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+          });
+
+          this.loadGoals();
+        },
+
+        error: () => {
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'error',
+            title: 'Error while deleting goal',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+          });
+        }
+
+      });
+
+    }
+
+  });
+}
 }
